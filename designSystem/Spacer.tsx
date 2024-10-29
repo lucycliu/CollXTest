@@ -1,9 +1,5 @@
 import { View } from 'react-native';
 
-export function HSpacer({ w }: { w: number }) {
-    return <View style={{ width: w }} />;
-}
+export const HSpacer = ({ w }: { w: number }) => <View style={{ width: w }} />;
 
-export function VSpacer({ h }: { h: number }) {
-    return <View style={{ height: h }} />;
-}
+export const VSpacer = ({ h }: { h: number }) => <View style={{ height: h }} />;

@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Modal, Pressable } from 'react-native';
+import { Stack } from 'expo-router';
 import { gql, useQuery } from '@apollo/client';
 
 import { Text } from '@/components/Themed';
 import { Card } from '@/constants/types';
 import { BasePage, VSpacer } from '@/designSystem';
 import CardListItem from '../../components/CardListItem';
+import { Constants } from '@/constants/designConstants';
+import CardFilterModal from '@/components/CardFilterModal';
 
 const CARD_LIST_QUERY = gql`
-    query CardsQuery {
+    query CardsQuery($name: String!) {
         cards(
             pagination: { itemsPerPage: 10, page: 0 }
-            filters: { category: "Pokemon" }
+            filters: { name: $name }
         ) {
             id
             localId
@@ -26,8 +29,20 @@ const CARD_LIST_QUERY = gql`
 `;
 
 export default function MainTabScreen() {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [nameFilter, setNameFilter] = useState('');
     const [likedCards, setLikedCards] = useState<string[]>([]);
-    const { data, loading, error } = useQuery(CARD_LIST_QUERY);
+    const { data, loading, error } = useQuery(CARD_LIST_QUERY, {
+        variables: { name: nameFilter },
+    });
+
+    function closeModal() {
+        setModalVisible(false);
+    }
+
+    function submitNameFilter(filter: string) {
+        setNameFilter(filter);
+    }
 
     function toggleLike(cardId: string) {
         if (likedCards.includes(cardId)) {
@@ -48,29 +63,46 @@ export default function MainTabScreen() {
         />
     );
 
+    let screenContent = <Text>Loading...</Text>;
     if (error) {
         // TODO: Better error logging
-        return (
-            <BasePage>
-                <Text>Error: {error.message}</Text>
-            </BasePage>
-        );
-    } else if (loading) {
-        return (
-            <BasePage>
-                <Text>Loading...</Text>
-            </BasePage>
-        );
-    }
-
-    return (
-        <BasePage>
+        screenContent = <Text>Error: {error.message}</Text>;
+    } else if (!loading) {
+        screenContent = (
             <FlatList
                 ItemSeparatorComponent={<VSpacer h={16} />}
                 data={data.cards}
                 renderItem={renderCardListItem}
                 keyExtractor={(item: Card) => item.id}
+                initialNumToRender={9}
             />
+        );
+    }
+
+    return (
+        <BasePage>
+            <>
+                <Stack.Screen
+                    options={{
+                        headerRight: () => (
+                            <Pressable
+                                onPress={() => setModalVisible(true)}
+                                style={{
+                                    marginRight: Constants.MARGIN_PADDING,
+                                }}>
+                                <Text>Filter</Text>
+                            </Pressable>
+                        ),
+                    }}
+                />
+                <Modal visible={modalVisible} transparent animationType="slide">
+                    <CardFilterModal
+                        closeModal={closeModal}
+                        onSubmit={submitNameFilter}
+                    />
+                </Modal>
+                {screenContent}
+            </>
         </BasePage>
     );
 }

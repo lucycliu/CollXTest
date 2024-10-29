@@ -53,13 +53,16 @@ const CardDataView = ({ card }: { card: Card }) => {
             <VSpacer h={Constants.MID_PADDING} />
             <Text style={styles.title}>{name}</Text>
             <VSpacer h={Constants.MID_PADDING} />
-            <Text style={styles.centerText}>{rarity}</Text>
+            <View style={styles.rarityContainer}>
+                <Text>{rarity}</Text>
+            </View>
+            <VSpacer h={Constants.SMALL_PADDING} />
             <Text
                 style={
                     styles.centerText
                 }>{`#${localId}/${set.cardCount.official} ${set.name}`}</Text>
             <VSpacer h={Constants.MID_PADDING} />
-            <Text style={{ color: 'grey' }}>Other info...</Text>
+            <Text style={{ color: 'grey' }}>And other info...</Text>
         </>
     );
 };
@@ -98,6 +101,13 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         alignSelf: 'center',
+    },
+    rarityContainer: {
+        alignSelf: 'center',
+        borderWidth: 1,
+        borderColor: Colors['dark'].text,
+        borderRadius: 8,
+        padding: 4,
     },
     centerText: {
         alignSelf: 'center',

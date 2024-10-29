@@ -10,7 +10,7 @@ In the project directory, run `npm install`, then `npm run start` to start the p
 
 ### How to query for the data?
 
-[...]
+Is it more practical to query from the entire database on initial load? Or to view the list of cards under individual sets? In a real-world app, perhaps it would be smart to show a list based on a user-customized algorithm, or show highest-valued cards first, etc. These are all questions to sort out with product/design.
 
 ### Query full card data all at once, or query for deeper card details upon clicking into the individual card?
 
@@ -25,10 +25,3 @@ Since the project requirement was that Likes only needed to be stored in local s
 In a real-world app, this data would need to be persisted in local storage, along with other user data. Depending on the use cases of the app, it may be more useful to store the Likes as one field of an individual card object.
 
 Of course, if we go with the server-side solution where a user's "likes" are persisted via mutations, then on the client-side it's much simpler :)
-
-## Future todos
-
-Since this is a proof of concept project, certain planned features have not been implemented:
-
--   Write a lot of unit tests for utility functions
--   Better dark mode color palette support... or just delete light mode :)
