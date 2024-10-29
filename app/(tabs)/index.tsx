@@ -11,9 +11,9 @@ import { Constants } from '@/constants/designConstants';
 import CardFilterModal from '@/components/CardFilterModal';
 
 const CARD_LIST_QUERY = gql`
-    query CardsQuery($name: String!) {
+    query CardsQuery($name: String!, $page: Int!) {
         cards(
-            pagination: { itemsPerPage: 10, page: 0 }
+            pagination: { itemsPerPage: 10, page: $page }
             filters: { name: $name }
         ) {
             id
@@ -32,8 +32,8 @@ export default function MainTabScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [nameFilter, setNameFilter] = useState('');
     const [likedCards, setLikedCards] = useState<string[]>([]);
-    const { data, loading, error } = useQuery(CARD_LIST_QUERY, {
-        variables: { name: nameFilter },
+    const { data, loading, error, fetchMore } = useQuery(CARD_LIST_QUERY, {
+        variables: { name: nameFilter, page: 1 },
     });
 
     function closeModal() {
@@ -52,6 +52,21 @@ export default function MainTabScreen() {
             // add cardId to liked list
             setLikedCards([...likedCards, cardId]);
         }
+    }
+
+    function loadMoreResults() {
+        // console.warn('load more on page', Math.ceil(data.cards.length / 10) + 1);
+        fetchMore({
+            variables: {
+                page: Math.ceil(data.cards.length / 10) + 1,
+            },
+            updateQuery: (prev, { fetchMoreResult }) => {
+                if (!fetchMoreResult) return prev;
+                return Object.assign({}, prev, {
+                    cards: [...prev.cards, ...fetchMoreResult.cards],
+                });
+            },
+        });
     }
 
     const renderCardListItem = ({ item }: { item: Card }) => (
@@ -75,6 +90,7 @@ export default function MainTabScreen() {
                 renderItem={renderCardListItem}
                 keyExtractor={(item: Card) => item.id}
                 initialNumToRender={9}
+                onEndReached={loadMoreResults}
             />
         );
     }
