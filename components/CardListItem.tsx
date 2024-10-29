@@ -78,8 +78,6 @@ export default function CardListItem({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: Constants.MID_PADDING,
-        // backgroundColor: Colors['dark'].cardBackground,
         borderRadius: 8,
     },
     row: {

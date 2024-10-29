@@ -1,7 +1,7 @@
+import { useState, useRef, useEffect } from 'react';
+import { View, StyleSheet, Text, TextInput } from 'react-native';
 import { Constants } from '@/constants/designConstants';
 import { IconButton, PrimaryButton, VSpacer } from '@/designSystem';
-import { useState } from 'react';
-import { View, StyleSheet, Text, TextInput } from 'react-native';
 
 interface Props {
     closeModal: () => void;
@@ -10,6 +10,12 @@ interface Props {
 
 export default function CardFilterModal({ closeModal, onSubmit }: Props) {
     const [filterName, setFilterName] = useState('');
+
+    const firstInput = useRef<TextInput>(null);
+
+    useEffect(() => {
+        firstInput?.current?.focus();
+    }, []);
 
     function submitRequest() {
         onSubmit(filterName);
@@ -34,8 +40,10 @@ export default function CardFilterModal({ closeModal, onSubmit }: Props) {
                 <Text>Filter by card name:</Text>
                 <VSpacer h={Constants.SMALL_PADDING} />
                 <TextInput
+                    ref={firstInput}
                     style={styles.input}
                     onChangeText={onChangeNameFilter}
+                    onSubmitEditing={submitRequest}
                     value={filterName}
                     autoCorrect={false}
                 />

@@ -55,7 +55,10 @@ export default function MainTabScreen() {
     }
 
     function loadMoreResults() {
-        // console.warn('load more on page', Math.ceil(data.cards.length / 10) + 1);
+        // console.warn(
+        //     'load more on page',
+        //     Math.ceil(data.cards.length / 10) + 1,
+        // );
         fetchMore({
             variables: {
                 page: Math.ceil(data.cards.length / 10) + 1,
@@ -91,6 +94,7 @@ export default function MainTabScreen() {
                 keyExtractor={(item: Card) => item.id}
                 initialNumToRender={9}
                 onEndReached={loadMoreResults}
+                onEndReachedThreshold={0}
             />
         );
     }
